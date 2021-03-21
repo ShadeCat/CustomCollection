@@ -1,7 +1,4 @@
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 public class MyCollection<E> implements Collection<E> {
 
@@ -11,6 +8,9 @@ public class MyCollection<E> implements Collection<E> {
 
     @Override
     public boolean add(E e) {
+        if(e == null){
+            throw new IllegalArgumentException("Не может быть пустое значение(?)");
+        }
         if (size == elementData.length) {
             elementData = Arrays.copyOf(elementData, (int) (size * 1.5f));
         }
@@ -25,7 +25,11 @@ public class MyCollection<E> implements Collection<E> {
 
     @Override
     public boolean isEmpty() {
-        return false;
+        boolean isEmpty = false;
+        if(this.size == 0){
+            isEmpty = true;
+        }
+        return isEmpty;
     }
 
     @Override
@@ -35,47 +39,105 @@ public class MyCollection<E> implements Collection<E> {
 
     @Override
     public boolean contains(Object o) {
-        return false;
+        boolean isContains = false;
+        for (int i = 0; i < this.size; i++){
+            if (this.elementData[i].equals(o)){
+                isContains = true;
+                break;
+            }
+        }
+        return isContains;
     }
 
     @Override
     public Object[] toArray() {
-        return new Object[0];
+        Object[] copiedArray = new Object[this.size];
+        System.arraycopy(this.elementData, 0, copiedArray, 0, this.size);
+        return copiedArray;
     }
 
     @Override
     public <T> T[] toArray(T[] a) {
-        return null;
+        System.arraycopy(this.elementData, 0, a, 0, Math.min(a.length, this.size));
+        return a;
     }
 
     @Override
     public boolean remove(Object o) {
-        return false;
+        boolean isRemoved = false;
+        if (this.contains(o)){
+            for (int i = 0; i < this.size; i++){
+                if(!isRemoved){
+                    if(this.elementData[i].equals(o)){
+                        isRemoved = true;
+                    }
+                }
+                if(isRemoved){
+                    this.elementData[i] = this.elementData[i+1];
+                }
+            }
+            this.size -= 1;
+        }
+        return isRemoved;
     }
 
     @Override
     public boolean containsAll(Collection<?> c) {
-        return false;
+        boolean isAllFound = true;
+        for (Object item : c)
+            isAllFound = this.contains(item);
+        return isAllFound;
     }
 
     @Override
     public boolean addAll(Collection<? extends E> c) {
-        return false;
+        boolean isAdd = true;
+        for (E item : c)
+            isAdd = this.add(item);
+        return isAdd;
     }
 
     @Override
     public boolean removeAll(Collection<?> c) {
-        return false;
+        boolean isRemoved = false;
+        for (Object item : c)
+            while (this.contains(item)){
+                isRemoved = this.remove(item);
+            }
+        return isRemoved;
     }
 
     @Override
     public boolean retainAll(Collection<?> c) {
-        return false;
+        boolean isRemoved = false;
+        MyCollection<Object> toRemove = new MyCollection<>();
+        for (int i = 0; i < this.size; i++) {
+            for (Object example : c){
+                if(example.equals(this.elementData[i])){
+                    toRemove.add(this.elementData[i]);
+                    break;
+                }
+            }
+        }
+        if(toRemove.size > 0){
+            isRemoved = true;
+            this.removeAll(toRemove);
+        }
+
+        return isRemoved;
     }
 
     @Override
     public void clear() {
+        this.size = 0;
+    }
 
+    public void reverse(){ //любителям на собесах заставлять переворачивать массив в блокноте посвящается
+        for (int i = 0; i < this.size / 2; i++) {
+            Object tmp = this.elementData[i];
+            this.elementData[i] = this.elementData[this.size - i - 1];
+            this.elementData[this.size - i - 1] = tmp;
+        }
     }
 
     private class MyIterator<T> implements Iterator<T> {
@@ -98,7 +160,16 @@ public class MyCollection<E> implements Collection<E> {
 
         @Override
         public void remove() {
-            throw new UnsupportedOperationException("remove");
+            if (this.cursor == 0) {
+                throw new IllegalStateException();
+            } else {
+                for (int i = cursor; i < size; i++) {
+                    elementData[cursor] = elementData[cursor++];
+                }
+                size -= 1;
+                this.cursor = -1;
+            }
         }
+
     }
 }
