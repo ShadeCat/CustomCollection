@@ -179,11 +179,10 @@ private class MyIterator<T> implements Iterator<T> {
         if (this.cursor == 0) {
             throw new IllegalStateException();
         } else {
-            for (int i = cursor; i < size; i++) {
-                elementData[cursor] = elementData[cursor++];
-            }
             size -= 1;
-            this.cursor = -1;
+            for (int i = cursor; i < size; i++) {
+                elementData[cursor - 1] = elementData[cursor];
+            }
         }
     }
 

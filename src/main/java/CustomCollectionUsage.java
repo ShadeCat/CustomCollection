@@ -38,6 +38,7 @@ public class CustomCollectionUsage {
                 it.remove();
             }
         }
+        out.println(Arrays.toString(myCollection.toArray()));
         // contains
         out.println("Вхождение");
         out.println(myCollection.contains(2));
