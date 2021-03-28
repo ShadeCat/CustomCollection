@@ -1,4 +1,5 @@
 import java.util.Arrays;
+import java.util.Iterator;
 
 import static java.lang.System.out;
 
@@ -8,7 +9,7 @@ public class CustomCollectionUsage {
         // add
         myCollection.add(1);
         myCollection.add(2);
-        myCollection.add(2);
+        myCollection.add(null);
         myCollection.add(3);
         //myCollection.add(null); вот это вот всё поломает
         // size
@@ -21,8 +22,21 @@ public class CustomCollectionUsage {
         out.println(myCollection.isEmpty());
         // iterator
         out.println("Итерация");
-        for (int item : myCollection) {
-            out.println(item);
+        for (Object item : myCollection) {
+            if (item == null) {
+                out.println("null");
+            } else {
+                out.println(item);
+            }
+        }
+        // int.remove
+        out.println("Убрать при итерации 3");
+        Iterator<Integer> it = myCollection.iterator();
+        while (it.hasNext()) {
+            Integer el = it.next();
+            if (Integer.valueOf(3).equals(el)) {
+                it.remove();
+            }
         }
         // contains
         out.println("Вхождение");

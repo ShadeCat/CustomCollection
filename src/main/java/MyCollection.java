@@ -11,11 +11,17 @@ public class MyCollection<E> implements Collection<E> {
 
     private Object[] elementData = new Object[startCapacity];
 
+    private static boolean isLike(final Object objectA, final Object objectB) {
+        if (objectA != null) {
+            return objectA.equals(objectB);
+        } else {
+            return (objectA == objectB);
+        }
+    }
+
+
     @Override
     public boolean add(final E e) {
-        if (e == null) {
-            throw new IllegalArgumentException("Не может быть пустое значение(?)");
-        }
         if (size == elementData.length) {
             elementData = Arrays.copyOf(elementData, (int) (size * overrideCapacityCoefficient));
         }
@@ -46,13 +52,15 @@ public class MyCollection<E> implements Collection<E> {
     public boolean contains(final Object o) {
         boolean isContains = false;
         for (int i = 0; i < this.size; i++) {
-            if (this.elementData[i].equals(o)) {
+            if (isLike(this.elementData[i], o)) {
                 isContains = true;
                 break;
             }
         }
         return isContains;
     }
+
+
 
     @Override
     public Object[] toArray() {
@@ -73,7 +81,7 @@ public class MyCollection<E> implements Collection<E> {
         if (this.contains(o)) {
             for (int i = 0; i < this.size; i++) {
                 if (!isRemoved) {
-                    if (this.elementData[i].equals(o)) {
+                    if (isLike(this.elementData[i], o)) {
                         isRemoved = true;
                     }
                 }
@@ -148,36 +156,36 @@ public class MyCollection<E> implements Collection<E> {
         }
     }
 
-    private class MyIterator<T> implements Iterator<T> {
+private class MyIterator<T> implements Iterator<T> {
 
-        private int cursor = 0;
+    private int cursor = 0;
 
-        @Override
-        public boolean hasNext() {
-            return cursor < size;
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public T next() {
-            if (cursor >= size) {
-                throw new NoSuchElementException();
-            }
-            return (T) elementData[cursor++];
-        }
-
-        @Override
-        public void remove() {
-            if (this.cursor == 0) {
-                throw new IllegalStateException();
-            } else {
-                for (int i = cursor; i < size; i++) {
-                    elementData[cursor] = elementData[cursor++];
-                }
-                size -= 1;
-                this.cursor = -1;
-            }
-        }
-
+    @Override
+    public boolean hasNext() {
+        return cursor < size;
     }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public T next() {
+        if (cursor >= size) {
+            throw new NoSuchElementException();
+        }
+        return (T) elementData[cursor++];
+    }
+
+    @Override
+    public void remove() {
+        if (this.cursor == 0) {
+            throw new IllegalStateException();
+        } else {
+            for (int i = cursor; i < size; i++) {
+                elementData[cursor] = elementData[cursor++];
+            }
+            size -= 1;
+            this.cursor = -1;
+        }
+    }
+
+}
 }
